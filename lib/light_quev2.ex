@@ -63,7 +63,6 @@ defmodule LightQuev2 do
   # Before pushing to queue, we have to persists record to storage
   # It has to be a string.
   #
-  @spec add(charlist) :: any
   def add(), do: {:error, :job_is_empty}
 
   def add(job) do
