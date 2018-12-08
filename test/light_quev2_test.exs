@@ -34,6 +34,11 @@ defmodule LightQuev2Test do
       assert "task1" == task1.task
       assert "task2" == task2.task
     end
+
+    test "check empty queue" do
+
+      assert LightQuev2.get() == {:ok, :queue_empty}
+    end
   end
 
   describe "reject/1" do
