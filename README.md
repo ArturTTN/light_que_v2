@@ -22,7 +22,7 @@ LightQuev2.get("taks1")
 LightQuev2.reject(task_id)
 => :ok
 
-LightQuev2.reject(task_id)
+LightQuev2.ack(task_id)
 => {:ok, %{id: id, task: task}}
 
 ```
