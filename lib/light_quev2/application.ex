@@ -10,6 +10,7 @@ defmodule LightQuev2.Application do
     children = [
       # Starts a worker by calling: LightQuev2.Worker.start_link(arg)
       # {LightQuev2.Worker, arg},
+      LightQuev2.Repo
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
