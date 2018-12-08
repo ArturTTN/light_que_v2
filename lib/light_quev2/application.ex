@@ -7,11 +7,12 @@ defmodule LightQuev2.Application do
 
   def start(_type, _args) do
     # List all child processes to be supervised
-    children = [
-      # Starts a worker by calling: LightQuev2.Worker.start_link(arg)
-      # {LightQuev2.Worker, arg},
-      LightQuev2.Repo
-    ]
+
+    children = case Mix.env() == :test do
+      true -> [LightQuev2.Repo]
+      false-> [LightQuev2.Repo, LightQuev2]
+    end
+
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
