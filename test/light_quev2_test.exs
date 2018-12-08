@@ -17,4 +17,21 @@ defmodule LightQuev2Test do
     assert "task1" == task1[:task]
     assert "task2" == task1[:task]
   end
+
+  test "Que reject should push in the end of queue" do
+
+    {:ok, _pid} = LightQuev2.start_link()
+    LightQuev2.add("task1")
+    LightQuev2.add("task2")
+    task1 = LightQuev2.get()
+
+    LightQuev2.reject(task1[:id])
+
+    task2 = LightQuev2.get()
+    task1 = LightQuev2.get()
+
+    assert "task1" == task1[:task]
+    assert "task2" == task1[:task]
+
+  end
 end
