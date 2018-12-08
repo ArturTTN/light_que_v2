@@ -19,6 +19,10 @@ defmodule LightQuev2Test do
       test "should validate input param" do
         assert LightQuev2.add() == {:error, :job_is_empty}
       end
+
+      test "humanize changeset errors" do
+        assert LightQuev2.add(7) == %{task: ["is invalid"]}
+      end
   end
 
   describe "get/1" do
@@ -52,6 +56,7 @@ defmodule LightQuev2Test do
       LightQuev2.reject(task1.id)
 
       task2 = LightQuev2.get()
+
       task1 = LightQuev2.get()
 
       assert "task1" == task1.task
@@ -71,18 +76,21 @@ defmodule LightQuev2Test do
     test "Que reject invalid task id error" do
       assert LightQuev2.reject(0) == {:error, :task_not_found}
     end
+
   end
 
   describe "ack/1" do
 
     test "should remove from persitence job" do
 
+      task_list = Persistence.get_task_list()
+
       LightQuev2.add("task1")
       task1 = LightQuev2.get()
 
       LightQuev2.ack(task1.id)
 
-      assert Persistence.get_task_list() == []
+      assert Persistence.get_task_list() == task_list
     end
 
     test "should change status in persistence" do
@@ -101,6 +109,27 @@ defmodule LightQuev2Test do
       LightQuev2.ack(task.id)
 
       assert LightQuev2.get() == {:ok, :queue_empty}
+    end
+  end
+
+  describe "Que Genserver" do
+
+    test "check async insert should be ordered in que FIFO" do
+
+      range = 1..10
+      expected_result = Enum.into(
+      (range
+      |> Enum.map(&Integer.to_string/1)), [])
+
+      # sleep to be sure processes will start in right order, but async due to Task.async
+      for item <- range do
+        Task.async(fn ->
+          LightQuev2.add("#{item}")
+        end);
+        :timer.sleep 1
+      end
+
+      assert expected_result == Enum.into(range, [], fn _ -> LightQuev2.get().task end)
     end
   end
 end
