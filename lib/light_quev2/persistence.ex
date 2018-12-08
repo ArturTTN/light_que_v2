@@ -9,7 +9,7 @@ defmodule LightQuev2.Persistence do
   def add(task) do
     %Job{}
     |> changeset(%{task: task, priority: NaiveDateTime.utc_now()})
-    |> Repo.insert
+    |> Repo.insert()
   end
 
   def update(nil, _), do: nil
@@ -17,7 +17,7 @@ defmodule LightQuev2.Persistence do
   def update(%Job{} = job, data) do
     job
     |> changeset(data)
-    |> Repo.update
+    |> Repo.update()
   end
 
   def update(task_id, data) do
@@ -30,9 +30,10 @@ defmodule LightQuev2.Persistence do
   end
 
   def get_task_list do
-    (from job in Job,
-    where: job.status in ["reject", "new"],
-    order_by: [asc: job.priority])
-    |> Repo.all
+    from(job in Job,
+      where: job.status in ["reject", "new"],
+      order_by: [asc: job.priority]
+    )
+    |> Repo.all()
   end
 end
