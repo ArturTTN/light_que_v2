@@ -7,7 +7,7 @@ defmodule LightQuev2 do
 
   ## Examples
       LightQuev2.add("task") #should return {:ok, enqueued}
-      LightQuev2.get(pid) # should return %LightQuev2.Persistence{}
+      LightQuev2.get() # should return %LightQuev2.Persistence{}
       LightQuev2.reject(id) # should put in the end of queue and return tuple {:ok, enqueued}
       LightQuev2.ack(id) # should delete from persistance and return tuple {:ok, :taks_removed}
   """
@@ -89,6 +89,9 @@ defmodule LightQuev2 do
 
   defp humanazie_error(nil), do: {:error, :task_not_found}
 
+  # Humanaze errors according to
+  # https://hexdocs.pm/ecto/Ecto.Changeset.html#traverse_errors/2
+  #
   defp humanazie_error({:error, %Ecto.Changeset{} = changeset}) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
       Enum.reduce(opts, msg, fn {key, value}, acc ->
