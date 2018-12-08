@@ -1,21 +1,29 @@
-# LightQuev2
+# LightQue V2
 
-**TODO: Add description**
+## Introduction
 
-## Installation
+Обновленная версия библиотеки LightQue.
+Добавлена возможность по API менять статус задачи на `:reject` и `:ack`.
+Обновлены и добавлены тесты.
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `light_quev2` to your list of dependencies in `mix.exs`:
+## Usage
+  для работы с очередью необходимо придерживатся поместить задчу командой
+  `LightQuev2.add("any_string")` где аргументом является любое значение типа `string`.
 
-```elixir
-def deps do
-  [
-    {:light_quev2, "~> 0.1.0"}
-  ]
-end
+``` elixir
+
+LightQuev2.add("taks1")
+=> {:ok, :enqueued}
+
+LightQuev2.get("taks1")
+=> %{id: id, task: task}
+
+
+LightQuev2.reject(task_id)
+=> :ok
+
+LightQuev2.reject(task_id)
+=> {:ok, %{id: id, task: task}}
+
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/light_quev2](https://hexdocs.pm/light_quev2).
 
