@@ -5,23 +5,24 @@ defmodule LightQuev2Test do
   alias LightQuev2.{Repo, Persistence}
 
   setup do
-    Ecto.Adapters.SQL.Sandbox.checkout(Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Repo)
+    Ecto.Adapters.SQL.Sandbox.mode(Repo, {:shared, self()})
     {:ok, pid} = LightQuev2.start_link()
     {:ok, [pid: pid]}
   end
 
   describe "add/1" do
 
-      test "should return the tuple {:ok, enqueued}" do
-        assert LightQuev2.add("task1") == {:ok, :enqueued}
-      end
+    test "should return the tuple {:ok, enqueued}" do
+      assert LightQuev2.add("task1") == {:ok, :enqueued}
+    end
 
-      test "should validate input param" do
-        assert LightQuev2.add() == {:error, :job_is_empty}
-      end
+    test "should validate input param" do
+      assert LightQuev2.add() == {:error, :job_is_empty}
+    end
 
-      test "humanize changeset errors" do
-        assert LightQuev2.add(7) == %{task: ["is invalid"]}
+    test "humanize changeset errors" do
+      assert LightQuev2.add(7) == %{task: ["is invalid"]}
       end
   end
 
@@ -64,7 +65,6 @@ defmodule LightQuev2Test do
     end
 
     test "should change status in persitence" do
-
 
       LightQuev2.add("task1")
       task = LightQuev2.get()
@@ -130,6 +130,20 @@ defmodule LightQuev2Test do
       end
 
       assert expected_result == Enum.into(range, [], fn _ -> LightQuev2.get().task end)
+    end
+
+    test "recover state after crash", %{pid: pid} do
+
+      LightQuev2.add("task1")
+      task = LightQuev2.get()
+      LightQuev2.reject(task.id)
+
+      GenServer.stop(pid)
+      LightQuev2.start_link()
+
+      after_restart_task = LightQuev2.get()
+
+      assert after_restart_task.id == task.id
     end
   end
 end
