@@ -9,5 +9,6 @@ defmodule LightQuev2.Repo.Migrations.CreateJobTable do
     end
 
     create index(:jobs, [:priority])
+    create index(:jobs, [:status])
   end
 end
